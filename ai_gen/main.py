@@ -1,5 +1,6 @@
-from fastapi import FastAPI, BackgroundTasks
-from ai_gen.generate_video import generate_video_task
+from fastapi import BackgroundTasks, FastAPI
+
+from ai_gen.generate_video import GenerateVideoArgs, generate_video_task
 
 app = FastAPI()
 
@@ -10,7 +11,7 @@ async def health():
 
 
 @app.post("/generate_video")
-async def generate_video(background_tasks: BackgroundTasks):
-    background_tasks.add_task(generate_video_task)
+async def generate_video(args: GenerateVideoArgs, background_tasks: BackgroundTasks):
+    background_tasks.add_task(generate_video_task, args)
     return {"status": "started generating video"}
 
