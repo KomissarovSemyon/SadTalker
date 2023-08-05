@@ -2,7 +2,7 @@ import os
 import shutil
 import sys
 from time import strftime
-from typing import List, Literal, Optional
+from typing import List, Literal, Union
 
 import requests
 from google.cloud import storage
@@ -21,19 +21,19 @@ GCS_BUCKET_NAME = 'selftaker-ai-gen'
 class GenerateVideoArgs(BaseModel):
     image_url: str
     audio_url: str
-    ref_eyeblink: Optional[str] = None
-    ref_pose: Optional[str] = None
+    ref_eyeblink: Union[str, None] = None
+    ref_pose: Union[str, None] = None
     checkpoint_dir: str = "./checkpoints"
     result_dir: str = "./results"
     pose_style: int = 0
     batch_size: int = 2
     size: int = 256
     expression_scale: float = 1.
-    input_yaw: Optional[List[int]] = None
-    input_pitch: Optional[List[int]] = None
-    input_roll: Optional[List[int]] = None
-    enhancer: Optional[str] = None
-    background_enhancer: Optional[str] = None
+    input_yaw: Union[List[int], None] = None
+    input_pitch: Union[List[int], None] = None
+    input_roll: Union[List[int], None] = None
+    enhancer: Union[str, None] = None
+    background_enhancer: Union[str, None] = None
     cpu: bool = False
     face3dvis: bool = False
     still: bool = False
@@ -42,7 +42,7 @@ class GenerateVideoArgs(BaseModel):
     old_version: bool = False
     # net structure and parameters
     net_recon: Literal["resnet18", "resnet34", "resnet50"] = "resnet50",
-    init_path: Optional[str] = None
+    init_path: Union[str, None] = None
     use_last_fc: bool = False
     bfm_folder: str = "./checkpoints/BFM_Fitting/"
     bfm_model: str = "BFM_model_front.mat"
