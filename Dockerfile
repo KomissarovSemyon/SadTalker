@@ -42,4 +42,6 @@ RUN pip install -r requirements.txt
 # Download models using the provided script
 RUN chmod +x scripts/download_models.sh && scripts/download_models.sh
 
-CMD ["uvicorn", "ai_gen.main:app"]
+EXPOSE 80
+
+CMD ["uvicorn", "ai_gen.main:app", "--host", "0.0.0.0", "--port", "80"]
