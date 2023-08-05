@@ -44,4 +44,4 @@ RUN chmod +x scripts/download_models.sh && scripts/download_models.sh
 
 EXPOSE 80
 
-CMD ["uvicorn", "ai_gen.main:app", "--host", "0.0.0.0", "--port", "80"]
+ENTRYPOINT ["uvicorn", "ai_gen.main:app", "--host", "0.0.0.0", "--port", "80"]
