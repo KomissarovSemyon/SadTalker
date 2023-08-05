@@ -5,6 +5,7 @@ from time import strftime
 from typing import List, Literal, Optional
 
 import requests
+from google.cloud import storage
 from pydantic import BaseModel
 
 from ai_gen.sad_talker.facerender.animate import AnimateFromCoeff
@@ -13,6 +14,8 @@ from ai_gen.sad_talker.generate_facerender_batch import get_facerender_data
 from ai_gen.sad_talker.test_audio2coeff import Audio2Coeff
 from ai_gen.sad_talker.utils.init_path import init_path
 from ai_gen.sad_talker.utils.preprocess import CropAndExtract
+
+GCS_BUCKET_NAME = 'selftaker-ai-gen'
 
 
 class GenerateVideoArgs(BaseModel):
@@ -66,10 +69,20 @@ def download_audio(audio_url):
     return audio_name
 
 
-def generate_video_task(args: GenerateVideoArgs):
+def upload_file_to_gcs(file_name: str):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(GCS_BUCKET_NAME)
+    blob = bucket.blob(file_name)
+
+    blob.upload_from_filename(file_name)
+
+    print(f"File {file_name} uploaded to GCS.")
+
+
+def generate_video_task(args: GenerateVideoArgs, file_name: str):
     pic_path = download_image(args.image_url)
     audio_path = download_audio(args.audio_url)
-    save_dir = os.path.join(args.result_dir, pic_path)
+    save_dir = os.path.join(args.result_dir, file_name)
     os.makedirs(save_dir, exist_ok=True)
     pose_style = args.pose_style
     device = args.device
@@ -180,4 +193,5 @@ def generate_video_task(args: GenerateVideoArgs):
 
     if not args.verbose:
         shutil.rmtree(save_dir)
+    upload_file_to_gcs(save_dir + '.mp4')
     return {'video_url': save_dir, 'args': args}
