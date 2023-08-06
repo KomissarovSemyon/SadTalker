@@ -1,4 +1,5 @@
-FROM python:3.8.16-bullseye
+# FROM python:3.8.16-bullseye
+FROM pytorch/pytorch:1.12.1-cuda11.3-cudnn8-runtime
 ARG DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
