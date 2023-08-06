@@ -95,7 +95,7 @@ def generate_video_task(args: GenerateVideoArgs, file_name: str):
     ref_eyeblink = args.ref_eyeblink
     ref_pose = args.ref_pose
 
-    current_root_path = os.path.split(sys.argv[0])[0]
+    current_root_path = os.getcwd()
 
     sadtalker_paths = init_path(
         args.checkpoint_dir,
