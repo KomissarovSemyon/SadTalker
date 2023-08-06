@@ -57,7 +57,7 @@ class GenerateVideoArgs(BaseModel):
 
 
 def download_image(image_url):
-    image_name = strftime("%Y_%m_%d_%H.%M.%S") + '.jpg'
+    image_name = strftime("%Y_%m_%d_%H.%M.%S") + '.png'
     img_data = requests.get(image_url).content
     with open(image_name, 'wb') as file:
         file.write(img_data)
