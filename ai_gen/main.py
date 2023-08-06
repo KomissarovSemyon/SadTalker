@@ -1,9 +1,12 @@
+import logging
 import time
 
 import torch
 from fastapi import BackgroundTasks, FastAPI
 
 from ai_gen.generate_video import GenerateVideoArgs, generate_video_task
+
+logging.warning("text")
 
 app = FastAPI()
 
