@@ -82,8 +82,10 @@ def upload_file_to_gcs(file_name: str):
 
 
 def generate_video_task(args: GenerateVideoArgs, file_name: str):
-    pic_path = download_image(args.image_url)
-    audio_path = download_audio(args.audio_url)
+    current_root_path = os.getcwd()
+
+    pic_path = os.path.join(current_root_path, download_image(args.image_url))
+    audio_path =  os.path.join(current_root_path, download_audio(args.audio_url))
     save_dir = os.path.join(args.result_dir, file_name)
     os.makedirs(save_dir, exist_ok=True)
     pose_style = args.pose_style
@@ -94,8 +96,8 @@ def generate_video_task(args: GenerateVideoArgs, file_name: str):
     input_roll_list = args.input_roll
     ref_eyeblink = args.ref_eyeblink
     ref_pose = args.ref_pose
+    print(f'pic_path={pic_path}, \naudio_path={audio_path}')
 
-    current_root_path = os.getcwd()
 
     sadtalker_paths = init_path(
         args.checkpoint_dir,
