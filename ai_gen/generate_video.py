@@ -96,8 +96,16 @@ def generate_video_task(args: GenerateVideoArgs, file_name: str):
     input_roll_list = args.input_roll
     ref_eyeblink = args.ref_eyeblink
     ref_pose = args.ref_pose
-    print(f'pic_path={pic_path}, \naudio_path={audio_path}')
-
+    print(f'pic_path={pic_path}')
+    print(f'audio_path={audio_path}')
+    print(f'pose_style={pose_style}')
+    print(f'device={device}')
+    print(f'batch_size={batch_size}')
+    print(f'input_yaw_list={input_yaw_list}')
+    print(f'input_pitch_list={input_pitch_list}')
+    print(f'input_roll_list={input_roll_list}')
+    print(f'ref_eyeblink={ref_eyeblink}')
+    print(f'ref_pose={ref_pose}')
 
     sadtalker_paths = init_path(
         args.checkpoint_dir,
