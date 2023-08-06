@@ -53,6 +53,8 @@ class GenerateVideoArgs(BaseModel):
     z_near: float = 5.
     z_far: float = 15.
 
+    device: Literal["cuda", "cpu"] = "cpu"
+
 
 def download_image(image_url):
     image_name = strftime("%Y_%m_%d_%H.%M.%S") + '.jpg'
