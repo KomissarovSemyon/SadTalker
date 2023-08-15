@@ -15,10 +15,12 @@ from ai_gen.sad_talker.test_audio2coeff import Audio2Coeff
 from ai_gen.sad_talker.utils.init_path import init_path
 from ai_gen.sad_talker.utils.preprocess import CropAndExtract
 
-GCS_BUCKET_NAME = 'selftaker-ai-gen'
+GCS_BUCKET_NAME = "sadtalker-ai-gen"
 
 
 class GenerateVideoArgs(BaseModel):
+    chat_id: str
+    message_id: str
     image_url: str
     audio_url: str
     ref_eyeblink: Union[str, None] = None
@@ -81,7 +83,19 @@ def upload_file_to_gcs(file_name: str):
     print(f"File {file_name} uploaded to GCS.")
 
 
-def generate_video_task(args: GenerateVideoArgs, file_name: str):
+def generate_and_send_video_task(args: GenerateVideoArgs, file_name: str):
+    video_file = None
+    try:
+        video_file = generate_video(args, file_name)
+    except Exception as e:
+        print(e)
+        # send to TG bot
+        return
+    print(video_file)
+    # send_message_to_tg(args, video_file)
+
+
+def generate_video(args: GenerateVideoArgs, file_name: str):
     current_root_path = os.getcwd()
 
     pic_path = os.path.join(current_root_path, download_image(args.image_url))
@@ -206,4 +220,4 @@ def generate_video_task(args: GenerateVideoArgs, file_name: str):
     if not args.verbose:
         shutil.rmtree(save_dir)
     upload_file_to_gcs(save_dir + '.mp4')
-    return {'video_url': save_dir, 'args': args}
+    return save_dir + '.mp4'
