@@ -19,7 +19,7 @@ from ai_gen.sad_talker.utils.preprocess import CropAndExtract
 GCS_BUCKET_NAME = "sadtalker-ai-gen"
 TELEGRAM_TOKEN = secretmanager.SecretManagerServiceClient().access_secret_version(
     name="projects/self-sadtalker/secrets/sadtalker-bot-token/versions/latest"
-)
+).payload.data.decode('UTF-8')
 
 bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
