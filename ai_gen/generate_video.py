@@ -5,7 +5,8 @@ from time import strftime
 from typing import List, Literal, Union
 
 import requests
-from google.cloud import storage
+import telegram
+from google.cloud import secretmanager, storage
 from pydantic import BaseModel
 
 from ai_gen.sad_talker.facerender.animate import AnimateFromCoeff
@@ -16,6 +17,11 @@ from ai_gen.sad_talker.utils.init_path import init_path
 from ai_gen.sad_talker.utils.preprocess import CropAndExtract
 
 GCS_BUCKET_NAME = "sadtalker-ai-gen"
+TELEGRAM_TOKEN = secretmanager.SecretManagerServiceClient().access_secret_version(
+    name="projects/secrets/self-sadtalker/versions/sadtalker-bot-token"
+)
+
+bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
 
 class GenerateVideoArgs(BaseModel):
@@ -89,10 +95,9 @@ def generate_and_send_video_task(args: GenerateVideoArgs, file_name: str):
         video_file = generate_video(args, file_name)
     except Exception as e:
         print(e)
-        # send to TG bot
+        bot.send_message(chat_id=args.chat_id, reply_to_message_id=args.message_id, text=str(e))
         return
-    print(video_file)
-    # send_message_to_tg(args, video_file)
+    bot.send_video(video=video_file, chat_id=args.chat_id, reply_to_message_id=args.message_id)
 
 
 def generate_video(args: GenerateVideoArgs, file_name: str):

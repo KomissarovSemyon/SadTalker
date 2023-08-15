@@ -17,6 +17,8 @@ basicsr==1.4.2
 facexlib==0.3.0
 fastapi==0.100.1
 google-cloud-storage==2.10.0
+google-cloud-secret-manager==2.10.0
+python-telegram-bot==11.1.0
 gradio
 gfpgan
 av
