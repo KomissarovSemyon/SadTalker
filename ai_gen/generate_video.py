@@ -97,7 +97,7 @@ def generate_and_send_video_task(args: GenerateVideoArgs, file_name: str):
         print(e)
         bot.send_message(chat_id=args.chat_id, reply_to_message_id=args.message_id, text=str(e))
         return
-    bot.send_video(video=video_file, chat_id=args.chat_id, reply_to_message_id=args.message_id)
+    bot.send_video(video=open(video_file, 'rb'), chat_id=args.chat_id, reply_to_message_id=args.message_id)
 
 
 def generate_video(args: GenerateVideoArgs, file_name: str):
