@@ -8,6 +8,7 @@ import requests
 import telegram
 from google.cloud import secretmanager, storage
 from pydantic import BaseModel
+from vosk_tts import Model, Synth
 
 from ai_gen.sad_talker.facerender.animate import AnimateFromCoeff
 from ai_gen.sad_talker.generate_batch import get_data
@@ -23,12 +24,14 @@ TELEGRAM_TOKEN = secretmanager.SecretManagerServiceClient().access_secret_versio
 
 bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
+tts_model = Synth(Model(model_name="vosk-model-tts-ru-0.1-natasha"))
+
 
 class GenerateVideoArgs(BaseModel):
     chat_id: str
     message_id: str
     image_url: str
-    audio_url: str
+    audio_text: str
     ref_eyeblink: Union[str, None] = None
     ref_pose: Union[str, None] = None
     checkpoint_dir: str = "./checkpoints"
@@ -100,11 +103,17 @@ def generate_and_send_video_task(args: GenerateVideoArgs, file_name: str):
     bot.send_video(video=open(video_file, 'rb'), chat_id=args.chat_id, reply_to_message_id=args.message_id)
 
 
+def generate_audio(audio_text: str):
+    audio_name = strftime("%Y_%m_%d_%H.%M.%S") + '.wav'
+    tts_model.synth(audio_text, audio_name)
+    return audio_name
+
 def generate_video(args: GenerateVideoArgs, file_name: str):
     current_root_path = os.getcwd()
 
     pic_path = os.path.join(current_root_path, download_image(args.image_url))
-    audio_path =  os.path.join(current_root_path, download_audio(args.audio_url))
+    audio_path = generate_audio(args.audio_text)
+    # audio_path =  os.path.join(current_root_path, download_audio(args.audio_url))
     save_dir = os.path.join(args.result_dir, file_name)
     os.makedirs(save_dir, exist_ok=True)
     pose_style = args.pose_style
