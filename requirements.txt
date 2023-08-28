@@ -19,6 +19,8 @@ fastapi==0.100.1
 google-cloud-storage==2.10.0
 google-cloud-secret-manager==2.10.0
 python-telegram-bot==11.1.0
+vosk-tts==0.3.47
+wave==0.0.2
 gradio
 gfpgan
 av
