@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+import wave
 from time import strftime
 from typing import List, Literal, Union
 
@@ -106,7 +107,21 @@ def generate_and_send_video_task(args: GenerateVideoArgs, file_name: str):
 def generate_audio(audio_text: str):
     audio_name = strftime("%Y_%m_%d_%H.%M.%S") + '.wav'
     tts_model.synth(audio_text, audio_name)
-    return audio_name
+
+    Change_RATE = 2
+
+    spf = wave.open(audio_name, 'rb')
+    rate = spf.getframerate()
+    signal = spf.readframes(-1)
+
+    new_audio_name = audio_name.replace('.wav', '_slow.wav')
+    wf = wave.open(new_audio_name, 'wb')
+    wf.setnchannels(1)
+    wf.setsampwidth(2)
+    wf.setframerate(rate * Change_RATE)
+    wf.writeframes(signal)
+    wf.close()
+    return new_audio_name
 
 def generate_video(args: GenerateVideoArgs, file_name: str):
     current_root_path = os.getcwd()
