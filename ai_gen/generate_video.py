@@ -108,7 +108,7 @@ def generate_audio(audio_text: str):
     audio_name = strftime("%Y_%m_%d_%H.%M.%S") + '.wav'
     tts_model.synth(audio_text, audio_name)
 
-    Change_RATE = 0.8
+    Change_RATE = 0.9
 
     spf = wave.open(audio_name, 'rb')
     rate = spf.getframerate()
