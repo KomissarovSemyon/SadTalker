@@ -134,7 +134,7 @@ def generate_audio_11labs(audio_text: str):
 
     audio = elevenlabs.generate(
         text=audio_text,
-        voice="Bella",
+        voice="Sally",
         model='eleven_multilingual_v2'
     )
     elevenlabs.save(audio, audio_name)
