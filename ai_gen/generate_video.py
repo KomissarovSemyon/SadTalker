@@ -39,6 +39,7 @@ class GenerateVideoArgs(BaseModel):
     message_id: str
     image_url: str
     audio_text: str
+    voice_name: str
     ref_eyeblink: Union[str, None] = None
     ref_pose: Union[str, None] = None
     checkpoint_dir: str = "./checkpoints"
@@ -129,12 +130,12 @@ def generate_audio_vosk(audio_text: str):
     # wf.close()
     return audio_name
 
-def generate_audio_11labs(audio_text: str):
+def generate_audio_11labs(audio_text: str, voice_name: str):
     audio_name = strftime("%Y_%m_%d_%H.%M.%S") + '.wav'
 
     audio = elevenlabs.generate(
         text=audio_text,
-        voice="Sally",
+        voice=voice_name,
         model='eleven_multilingual_v2'
     )
     elevenlabs.save(audio, audio_name)
@@ -144,7 +145,7 @@ def generate_video(args: GenerateVideoArgs, file_name: str):
     current_root_path = os.getcwd()
 
     pic_path = os.path.join(current_root_path, download_image(args.image_url))
-    audio_path = generate_audio_11labs(args.audio_text)
+    audio_path = generate_audio_11labs(args.audio_text, args.voice_name)
     # audio_path =  os.path.join(current_root_path, download_audio(args.audio_url))
     save_dir = os.path.join(args.result_dir, file_name)
     os.makedirs(save_dir, exist_ok=True)
