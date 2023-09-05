@@ -5,6 +5,7 @@ import wave
 from time import strftime
 from typing import List, Literal, Union
 
+import elevenlabs
 import requests
 import telegram
 from google.cloud import secretmanager, storage
@@ -22,10 +23,15 @@ GCS_BUCKET_NAME = "sadtalker-ai-gen"
 TELEGRAM_TOKEN = secretmanager.SecretManagerServiceClient().access_secret_version(
     name="projects/self-sadtalker/secrets/sadtalker-bot-token/versions/latest"
 ).payload.data.decode('UTF-8')
+ELEVELABS_API_KEY = secretmanager.SecretManagerServiceClient().access_secret_version(
+    name="projects/self-sadtalker/secrets/elevenlabs-api-key/versions/latest"
+).payload.data.decode('UTF-8')
 
 bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
-tts_model = Synth(Model(model_name="vosk-model-tts-ru-0.1-natasha"))
+vosk_tts_model = Synth(Model(model_name="vosk-model-tts-ru-0.1-natasha"))
+elevenlabs.set_api_key(ELEVELABS_API_KEY)
+
 
 
 class GenerateVideoArgs(BaseModel):
@@ -104,9 +110,9 @@ def generate_and_send_video_task(args: GenerateVideoArgs, file_name: str):
     bot.send_video(video=open(video_file, 'rb'), chat_id=args.chat_id, reply_to_message_id=args.message_id)
 
 
-def generate_audio(audio_text: str):
+def generate_audio_vosk(audio_text: str):
     audio_name = strftime("%Y_%m_%d_%H.%M.%S") + '.wav'
-    tts_model.synth(audio_text, audio_name)
+    vosk_tts_model.synth(audio_text, audio_name)
 
     # Change_RATE = 1
 
@@ -121,6 +127,17 @@ def generate_audio(audio_text: str):
     # wf.setframerate(rate * Change_RATE)
     # wf.writeframes(signal)
     # wf.close()
+    return audio_name
+
+def generate_audio_11labs(audio_text: str):
+    audio_name = strftime("%Y_%m_%d_%H.%M.%S") + '.wav'
+
+    audio = elevenlabs.generate(
+        text=audio_text,
+        voice="Bella",
+        model='eleven_multilingual_v2'
+    )
+    elevenlabs.save(audio, audio_name)
     return audio_name
 
 def generate_video(args: GenerateVideoArgs, file_name: str):
