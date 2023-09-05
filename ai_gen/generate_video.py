@@ -144,7 +144,7 @@ def generate_video(args: GenerateVideoArgs, file_name: str):
     current_root_path = os.getcwd()
 
     pic_path = os.path.join(current_root_path, download_image(args.image_url))
-    audio_path = generate_audio(args.audio_text)
+    audio_path = generate_audio_11labs(args.audio_text)
     # audio_path =  os.path.join(current_root_path, download_audio(args.audio_url))
     save_dir = os.path.join(args.result_dir, file_name)
     os.makedirs(save_dir, exist_ok=True)
